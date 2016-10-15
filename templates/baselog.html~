@@ -1,0 +1,14 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Stage</title>
+	<link rel="stylesheet" href="{% static 'css/animate.css' %}">
+        <link rel="stylesheet" href="{% static 'css/logincss.css' %}">
+    </head>
+
+    <body>
+    {% block content %}{% endblock content %}
+    </body>
+</html>

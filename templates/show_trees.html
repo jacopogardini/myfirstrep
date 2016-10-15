@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+<!--  start menu  -->
+	<section class="menu">
+            <div class="wrapper">
+                <div class="menu_title">
+                        <h2>Show Trees</h2>
+                </div>
+                <div class="mean_menu">
+                    <!--  left menu row  -->
+                    <article >
+			<form class="form2" action="/myapp/tree_details/" method="post">{% csrf_token %}
+				<table class="table1">
+					<tr><td class="td1"><input type="submit" name="submit" class="inp" value="Go to tree"></td><td><select class="styled-select slate" id="sel" name="opt">
+						{% for obj in treeslist %}
+	  						<option value="{{obj.name}}">{{obj.name}}</option>
+						{% endfor %}
+					</select></td></tr>
+				</table>
+			</form> 
+                    </article>             
+                </div>                               
+            </div>           
+        </section><!--  end menu  -->
+{% endblock %}

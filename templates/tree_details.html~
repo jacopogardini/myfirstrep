@@ -1,0 +1,235 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+<!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>-->
+<!--<script src="http://d3js.org/d3.v3.min.js" type="text/javascript"></script>-->
+<script src="{% static 'js/d3/d3.js' %}" type="text/javascript"></script> 
+<script src="{% static 'js/jquery.min.js' %}" type="text/javascript"></script> 
+<script src="{% static 'js/javas.js' %}" type="text/javascript"></script>
+<div id="trcont"></div>
+
+<script type="text/javascript">
+	//console.log(JSON.stringify([{{jsonlist|safe}}]));
+	var jst = JSON.stringify([{{jsonlist|safe}}]);
+	my(jst);
+</script>
+
+<div class="myDiv">
+<input type="hidden" id="nodd3" name="nodd3" value=""/>
+<table class="myTab">
+<tr>
+<td>
+<form class="hide" id="ftab2" method="POST" action="../create_node/">{% csrf_token %}
+  <fieldset>
+  <legend>Create Node:</legend>
+  <input type="hidden" name="opt" value="{{ root.id }}"/>
+  <table id="crtab2" class="table1"></table>
+  </fieldset>
+</form>
+</td>
+<td><br>
+</td>
+</tr>
+<tr>
+<td>
+<form class="hide" id="frmnod" method="POST" action="../save_node/" >{% csrf_token %}
+<fieldset>
+  <legend>Node Information:</legend>
+  <input type="hidden" name="opt" value="{{ root.id}}"/>
+  <table id="tbnode" class="table1"></table>
+  </fieldset>
+</form>
+</td>
+<td>
+<form class="hide" id="frmrow" method="POST" action="../save_table/">{% csrf_token %}
+  <fieldset>
+  <legend>Times/Volumes Information:</legend>
+  <input type="hidden" name="opt" value="{{ root.id }}"/>
+  <table id="table" class="table1"></table>
+  </fieldset>
+</form>
+</td>
+</tr>
+<tr>
+<td>
+<form class="hide" id="frmdel" method="POST" action="../delete_node/" >{% csrf_token %}
+<fieldset>
+  <legend>Delete Node:</legend>
+  <input type="hidden" name="opt" value="{{ root.id }}"/>
+  <input type="hidden" id="idhid" name="hiddel" />
+  <table id="tbdel" class="table1"></table>
+</fielset>
+</form>
+</td>
+<td>
+<form class="hide" id="ftab" method="POST" action="../insrow/">{% csrf_token %}
+<fieldset>
+  <legend>Insert Time/Volume:</legend>
+  <input type="hidden" name="opt" value="{{ root.id }}"/>
+  <table id="crtab" class="table1"></table>
+</fieldset>
+</form>
+</td>
+</tr>
+</table>
+</div>
+<script >
+ $(document).ready(function(){
+	$(".hide").hide(); 
+	$(".myDiv").hide();
+});
+</script>
+
+<script type="text/javascript">
+    var frm = $('#frmnod');
+    frm.submit(function (ev) {
+	var inp = document.getElementById("frmnod").elements;
+	var ok = true;
+	for(i=0;i<inp.length;i++){
+		if(inp[i].value == ""){
+			ok=false
+		}
+	}
+	if(ok){
+        $.ajax({
+            type: frm.attr('method'),
+            url: frm.attr('action'),
+            data: $("#frmnod :input").serialize(),
+            success: function (json) {
+		$("#trcont").empty();
+		$('#ftab2').empty();
+		var jlist=JSON.stringify([JSON.parse(json.datajs)]);
+		my(jlist);
+            }
+        });
+	}else{alert("Please fill all fields");}
+        ev.preventDefault();
+    });
+
+    var frm2 = $('#frmdel');
+    frm2.submit(function (ev) {
+        $.ajax({
+            type: frm2.attr('method'),
+            url: frm2.attr('action'),
+            data: $("#frmdel :input").serialize(),
+            success: function (json) {
+		$("#trcont").empty();
+		$("#tbnode").empty();
+		$("#tbdel").empty();
+		$("#table").empty();
+		$('#crtab').empty();
+		if(json.datajs==="radice"){
+			$('#trcont').append('Albero eliminato');
+		}else{
+			var jlist2=JSON.stringify([JSON.parse(json.datajs)]);
+			my(jlist2);
+		}
+                $(".myDiv").hide();
+            }
+        });
+        ev.preventDefault();
+    });
+
+    var frmrig = $("#frmrow");
+	frmrig.submit(function (ev) {
+	var inp = document.getElementById("frmrow").elements;
+	var ok = true;
+	for(i=0;i<inp.length;i++){
+		if(inp[i].value == ""){
+			ok=false
+		}
+	}
+	if(ok){
+		$.ajax({
+		    type: frmrig.attr('method'),
+		    url: frmrig.attr('action'),
+		    data: frmrig.serialize(),
+		    success: function (json) {
+			$("#trcont").empty();
+			//$("#table").empty();
+			if(json.dele){
+				for(i=0;i<json.dele.length;i++){
+					$("#row"+json.dele[i]).remove();
+					console.log(json.dele[i]);
+				}
+			}
+			if ($('#table tr').length == 2) {
+				console.log("passssss");
+				if($("#idUp")){
+			    		$("#idUp").remove();
+				}
+			}
+			var jlist3=JSON.stringify([JSON.parse(json.datajs)]);
+			my(jlist3);
+		    }
+		});
+		}else{alert("Please fill all fields");}
+		ev.preventDefault();
+	    });
+    
+    var ftab = $('#ftab');
+    ftab.submit(function (ev) {
+	var inp = document.getElementById("ftab").elements;
+	var ok = true;
+	for(i=0;i<inp.length;i++){
+		if(inp[i].value == ""){
+			ok=false
+		}
+	}
+	if(ok){
+        $.ajax({
+            type: ftab.attr('method'),
+            url: ftab.attr('action'),
+            data: ftab.serialize(),
+            success: function (json) {
+		$("#trcont").empty();
+		var jlist5=JSON.stringify([JSON.parse(json.datajs)]);
+		my(jlist5);
+		$("#table").empty();
+		var table=$("#table");
+		if(json.table[0]){
+			table.append('<tr><td><input type="hidden" name="node" value= "'+json.table[0].node+'"></td></tr>');			
+			for(i=0;i<json.table.length;i++){
+				//console.log(i);
+				table.append('<tr id="row'+json.table[i].id+'"><td><input type="text" name="time" value= "'+json.table[i].time+'"></td><td><input type="text" name="volume" value="'+json.table[i].volume+'"></td><td><input type="checkbox" name="delete" value="'+json.table[i].id+'"></td><td><input type="hidden" name="id" value="'+json.table[i].id+'"></td></tr>');
+			}
+			table.append('<tr><td><input type="submit" id="idUp" name="submit" value="Update"></td></tr>');
+			$("#id_time").val('');
+			$("#id_volume").val('');
+		}
+            }
+        });
+	}else{alert("Please fill all fields");}
+        ev.preventDefault();
+    });
+
+	var cre = $('#ftab2');
+	    cre.submit(function (ev) {
+		var inp = document.getElementById("ftab2").elements;
+		var ok = true;
+		for(i=0;i<inp.length;i++){
+			if(inp[i].value == ""){
+				ok=false
+			}
+		}
+		if(ok){
+		$.ajax({
+		    type: cre.attr('method'),
+		    url: cre.attr('action'),
+		    data: cre.serialize(),
+		    success: function (json) {
+			$("#trcont").empty();
+			var jli=JSON.stringify([JSON.parse(json.datajs)]);
+			my(jli);
+			$("#table").empty();
+		    }
+		});
+		}else{alert("Please fill all fields");}
+		ev.preventDefault();
+	    });
+    
+    
+</script>
+
+{% endblock %}

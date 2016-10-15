@@ -1,0 +1,25 @@
+{% extends "baselog.html" %}
+{% block content %}
+
+{% if form.errors %}
+        <script>alert("Dati errati");</script>
+{% endif %}
+
+<div class="container">
+	<div class="top">
+		<h1 id="title" class="hidden"></h1>
+	</div>
+	<div class="login-box">
+		<div class="box-header">
+			<h2>Login</h2>
+		</div>
+		<form method="post" action=".">{% csrf_token %}
+		    <label for="id_username">Username:</label><br/>{{ form.username }}<br/>
+		    <label for="id_password">Password:</label><br/>{{ form.password }}<br/>
+		<button type="submit" value="Login" >Send</button>
+		<input type="hidden" name="next" value="/myapp/show_trees" />
+		</form>
+	</div>
+</div>
+
+{% endblock %}

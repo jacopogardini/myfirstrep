@@ -1,0 +1,39 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Stage</title>
+        <link rel="stylesheet" href="{% static 'css/reset.css' %}"/>
+	<link rel="stylesheet" href="{% static 'css/main.css' %}"/>
+        <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    </head>
+
+    <body>
+	<!--  start header  -->
+	<header>
+	    <div class="wrapper">
+		<div id="us" class="logo">
+		    User: {{request.user}}
+		</div>
+		<nav>
+		    <ul>
+		        <li><a href="/myapp/show_trees"> Show Trees</a> </li>
+		        <li><a href="/myapp/create_root"> Create Root</a></li> 
+		        <!--<li><a href="/myapp/create_table"> Create Table</a>  </li>-->
+			<li><a href="/myapp/logout"> Logout</a>  </li>
+		    </ul>
+		</nav>
+	    </div>
+	</header><!--  end header  -->
+    {% block content %}{% endblock content %}
+	<!--  start footer  -->
+	<footer>
+	    <div class="wrapper">
+		<section class="copyrights">
+		    <p>Devoloped by Jacopo Gardini</p>
+		</section>
+		<!--  footer navigation  -->			
+	    </div>
+	</footer><!--  end footer  -->  
+    </body>
+</html>
